@@ -1,0 +1,49 @@
+services:
+  nginx:
+    image: nginx:1.27.3
+    container_name: panda_nginx
+    volumes:
+      - ./:/var/www/
+      - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - 80:80
+    depends_on:
+      - app
+
+  app:
+    build:
+      args:
+        user: container-user
+        uid: 1000
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    container_name: panda_app
+    volumes:
+      - ./:/var/www/
+    depends_on:
+      - db
+      - redis
+    ports:
+      - 5174:5173
+
+  db:
+    image: mysql:8.0
+    restart: always
+    volumes:
+      - ./tmp/db/:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: panda
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    container_name: panda_db
+
+  redis:
+    image: redis:7
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
