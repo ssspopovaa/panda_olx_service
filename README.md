@@ -23,11 +23,12 @@ A Laravel application for tracking price changes on OLX listings. Users can subs
 ## Installation
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:ssspopovaa/panda_olx_service.git price-watcher
    cd price-watcher
+   docker compose up --build
    ```
 
-2. **Install dependencies**:
+2. **Install dependencies (inside container)**:
    ```bash
    composer install
    ```
@@ -67,30 +68,25 @@ A Laravel application for tracking price changes on OLX listings. Users can subs
    ```
 
 ## Usage
-1. **Start the server**:
-   ```bash
-   php artisan serve
-   ```
-
-2. **Run queue worker**:
+1. **Run queue worker**:
    ```bash
    php artisan queue:work
    ```
 
-3. **Run scheduler** (local testing):
+2. **Run scheduler** (local testing):
    ```bash
    php artisan schedule:work
    ```
 
-4. **Subscribe to a listing**:
+3. **Subscribe to a listing**:
    ```bash
    curl -X POST http://localhost:8000/api/subscribe -H "Content-Type: application/json" -d '{"url":"https://olx.ua/test","email":"test@example.com"}'
    ```
 
-5. **Verify subscription**:
+4. **Verify subscription**:
    Click the link in the verification email.
 
-6. **Check prices manually**:
+5. **Check prices manually**:
    ```bash
    php artisan adverts:enqueue-checks --interval=15
    ```
