@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\AdvertRepositoryInterface;
-use App\Repositories\AdvertRepository;
+use App\Repositories\AdvertPriceRepositoryInterface;
+use App\Repositories\AdvertPricePriceRepository;
 use App\Repositories\SubscriptionRepositoryInterface;
 use App\Repositories\SubscriptionRepository;
 use App\Services\SubscriptionServiceInterface;
@@ -21,12 +21,12 @@ class RepositoryServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton(AdvertRepositoryInterface::class, AdvertRepository::class);
+        $this->app->singleton(AdvertPriceRepositoryInterface::class, AdvertPricePriceRepository::class);
         $this->app->singleton(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
 
         $this->app->singleton(SubscriptionServiceInterface::class, function ($app) {
             return new SubscriptionService(
-                $app->make(AdvertRepositoryInterface::class),
+                $app->make(AdvertPriceRepositoryInterface::class),
                 $app->make(SubscriptionRepositoryInterface::class),
                 $app->make(PriceWatcherServiceInterface::class)
             );
@@ -52,7 +52,7 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->singleton(PriceWatcherServiceInterface::class, function ($app) {
             return new PriceWatcherService(
-                $app->make(AdvertRepositoryInterface::class),
+                $app->make(AdvertPriceRepositoryInterface::class),
                 $app->make(OlxApiClientInterface::class)
             );
         });

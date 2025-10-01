@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Mail\PriceChangedMail;
-use App\Repositories\AdvertRepositoryInterface;
+use App\Repositories\AdvertPriceRepositoryInterface;
 use App\Repositories\SubscriptionRepositoryInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,7 +23,7 @@ class NotifySubscribersJob implements ShouldQueue
     ) {
     }
 
-    public function handle(SubscriptionRepositoryInterface $subsRepo, AdvertRepositoryInterface $advertRepo)
+    public function handle(SubscriptionRepositoryInterface $subsRepo, AdvertPriceRepositoryInterface $advertRepo)
     {
         $emails = $subsRepo->getVerifiedEmailsByAdvertId($this->advertId);
 

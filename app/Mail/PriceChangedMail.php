@@ -5,7 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Repositories\AdvertRepositoryInterface;
+use App\Repositories\AdvertPriceRepositoryInterface;
 
 class PriceChangedMail extends Mailable
 {
@@ -17,7 +17,7 @@ class PriceChangedMail extends Mailable
         private readonly int $advertId,
         private readonly ?float $oldPrice,
         private readonly ?float $newPrice,
-        private readonly AdvertRepositoryInterface $advertRepo
+        private readonly AdvertPriceRepositoryInterface $advertRepo
     ) {
         $this->priceHistory = $advertRepo->getPriceHistory($advertId);
     }
