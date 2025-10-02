@@ -25,6 +25,5 @@ class EnqueueChecks extends Command
         foreach ($adverts as $advert) {
             CheckAdvertJob::dispatch($advert->id);
         }
-        $this->info('Enqueued ' . $adverts->count());
     }
 }

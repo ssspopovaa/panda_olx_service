@@ -2,35 +2,26 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use App\Repositories\AdvertRepositoryInterface;
-use App\Repositories\AdvertRepository;
-use App\Repositories\SubscriptionRepositoryInterface;
-use App\Repositories\SubscriptionRepository;
-use App\Services\SubscriptionServiceInterface;
-use App\Services\SubscriptionService;
-use App\Services\OlxApiClientInterface;
-use App\Services\OlxApiClient;
-use App\Services\OlxParserClient;
+use App\Infrastructure\Repositories\Advert\AdvertRepository;
+use App\Infrastructure\Repositories\Advert\AdvertRepositoryInterface;
+use App\Infrastructure\Repositories\AdvertPrice\AdvertPriceRepository;
+use App\Infrastructure\Repositories\AdvertPrice\AdvertPriceRepositoryInterface;
+use App\Infrastructure\Repositories\Subscription\SubscriptionRepository;
+use App\Infrastructure\Repositories\Subscription\SubscriptionRepositoryInterface;
 use App\Services\OAuthTokenManager;
-use App\Services\PriceWatcherServiceInterface;
-use App\Services\PriceWatcherService;
+use App\Services\OlxApiClient;
+use App\Services\OlxApiClientInterface;
+use App\Services\OlxParserClient;
 use GuzzleHttp\Client;
+use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
     public function register()
     {
         $this->app->singleton(AdvertRepositoryInterface::class, AdvertRepository::class);
+        $this->app->singleton(AdvertPriceRepositoryInterface::class, AdvertPriceRepository::class);
         $this->app->singleton(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
-
-        $this->app->singleton(SubscriptionServiceInterface::class, function ($app) {
-            return new SubscriptionService(
-                $app->make(AdvertRepositoryInterface::class),
-                $app->make(SubscriptionRepositoryInterface::class),
-                $app->make(PriceWatcherServiceInterface::class)
-            );
-        });
 
         $this->app->singleton(OlxApiClientInterface::class, function ($app) {
             $type = config('services.olx.client_type', 'parser');
@@ -48,13 +39,6 @@ class RepositoryServiceProvider extends ServiceProvider
             } else {
                 throw new \Exception("Unknown OLX client type: {$type}");
             }
-        });
-
-        $this->app->singleton(PriceWatcherServiceInterface::class, function ($app) {
-            return new PriceWatcherService(
-                $app->make(AdvertRepositoryInterface::class),
-                $app->make(OlxApiClientInterface::class)
-            );
         });
     }
 

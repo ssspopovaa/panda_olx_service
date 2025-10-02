@@ -1,17 +1,20 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Prices;
 
+use App\Infrastructure\Repositories\Advert\AdvertRepositoryInterface;
 use App\Jobs\NotifySubscribersJob;
 use App\Models\Advert;
-use App\Repositories\AdvertRepositoryInterface;
+use App\Services\AdvertPrice\AdvertPriceService;
+use App\Services\OlxApiClientInterface;
 use Illuminate\Support\Facades\Cache;
 
-class PriceWatcherService implements PriceWatcherServiceInterface
+readonly class PriceWatcherService
 {
     public function __construct(
-        private readonly AdvertRepositoryInterface $adverts,
-        private readonly OlxApiClientInterface $olxClient
+        private AdvertRepositoryInterface $adverts,
+        private OlxApiClientInterface $olxClient,
+        private AdvertPriceService $advertPriceService
     ) {
     }
 
@@ -44,7 +47,12 @@ class PriceWatcherService implements PriceWatcherServiceInterface
 
             if ($oldPrice === null || (float) $oldPrice !== (float) $newPrice) {
                 $this->adverts->updatePrice($model->id, $newPrice, $currency);
-                NotifySubscribersJob::dispatch($model->id, $oldPrice, $newPrice);
+                NotifySubscribersJob::dispatch(
+                    $model->id,
+                    $oldPrice,
+                    $newPrice,
+                    $this->advertPriceService->getPriceHistory($model->id)
+                );
             } else {
                 $this->adverts->updatePrice($model->id, $oldPrice, $currency);
             }

@@ -1,24 +1,25 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Subscription;
 
-use App\Repositories\AdvertRepositoryInterface;
-use App\Repositories\SubscriptionRepositoryInterface;
+use App\Infrastructure\Repositories\Advert\AdvertRepositoryInterface;
+use App\Infrastructure\Repositories\Subscription\SubscriptionRepositoryInterface;
 use App\Mail\VerifySubscriptionMail;
+use App\Services\Prices\PriceWatcherService;
+use Exception;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Exception;
 
-class SubscriptionService implements SubscriptionServiceInterface
+class SubscriptionService
 {
     private AdvertRepositoryInterface $adverts;
     private SubscriptionRepositoryInterface $subs;
-    private PriceWatcherServiceInterface $watcher;
+    private PriceWatcherService $watcher;
 
     public function __construct(
         AdvertRepositoryInterface $adverts,
         SubscriptionRepositoryInterface $subs,
-        PriceWatcherServiceInterface $watcher
+        PriceWatcherService $watcher
     ) {
         $this->adverts = $adverts;
         $this->subs = $subs;

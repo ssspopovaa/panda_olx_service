@@ -5,4 +5,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
 Route::get('/verify', [SubscriptionController::class, 'verify']);
-Route::get('/subscriptions', [SubscriptionController::class, 'listByEmail']);
+Route::get('/subscriptions', [SubscriptionController::class, 'listSubscriptions']);

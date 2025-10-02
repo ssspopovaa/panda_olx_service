@@ -1,12 +1,17 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Infrastructure\Repositories\Advert;
 
 use App\Models\Advert;
 use App\Models\AdvertPrice;
 
 class AdvertRepository implements AdvertRepositoryInterface
 {
+    public function findById(int $id): ?Advert
+    {
+        return Advert::find($id);
+    }
+
     public function findByUrl(string $url): ?Advert
     {
         return Advert::where('url', $url)->first();
@@ -20,7 +25,9 @@ class AdvertRepository implements AdvertRepositoryInterface
     public function updatePrice(int $advertId, ?float $price, ?string $currency): void
     {
         $advert = Advert::find($advertId);
-        if (!$advert) return;
+        if (!$advert) {
+            return;
+        }
 
         if ($price !== null) {
             AdvertPrice::create([
