@@ -6,7 +6,7 @@ use App\Jobs\CheckAdvertJob;
 use App\Jobs\NotifySubscribersJob;
 use App\Models\Advert;
 use App\Services\OlxApiClientInterface;
-use App\Services\PriceWatcherServiceInterface;
+use App\Services\Prices\PriceWatcherService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Mockery;
@@ -40,8 +40,7 @@ class PriceWatcherTest extends TestCase
 
         $this->app->instance(OlxApiClientInterface::class, $mockClient);
 
-        // Вместо использования Job, тестируем сервис напрямую
-        $service = app(PriceWatcherServiceInterface::class);
+        $service = app(PriceWatcherService::class);
         $service->checkAdvert($advert);
 
         $advert->refresh();
@@ -80,14 +79,12 @@ class PriceWatcherTest extends TestCase
 
         $this->app->instance(OlxApiClientInterface::class, $mockClient);
 
-        $service = app(PriceWatcherServiceInterface::class);
+        $service = app(PriceWatcherService::class);
 
-        // Первая проверка
         $service->checkAdvert($advert);
         $advert->refresh();
         $this->assertEqualsWithDelta(1200.0, (float) $advert->last_price, 0.001);
 
-        // Вторая проверка
         $service->checkAdvert($advert);
         $advert->refresh();
         $this->assertEqualsWithDelta(1100.0, (float) $advert->last_price, 0.001);
@@ -125,7 +122,7 @@ class PriceWatcherTest extends TestCase
 
         $this->app->instance(OlxApiClientInterface::class, $mockClient);
 
-        $service = app(PriceWatcherServiceInterface::class);
+        $service = app(PriceWatcherService::class);
         $service->checkAdvert($advert);
 
         $advert->refresh();
@@ -133,7 +130,6 @@ class PriceWatcherTest extends TestCase
         $this->assertEquals(10, $advert->check_error_count);
     }
 
-    // Упрощенный тест для Job - проверяем только диспатч
     public function test_job_dispatches_correctly()
     {
         Queue::fake();

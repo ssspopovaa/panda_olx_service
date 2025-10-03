@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\Advert;
-use App\Services\PriceWatcherServiceInterface;
+use App\Infrastructure\Repositories\Advert\AdvertRepositoryInterface;
+use App\Services\Prices\PriceWatcherService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,13 +14,14 @@ class CheckAdvertJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(private int $listingId)
+    public function __construct(private readonly int $advertId)
     {
     }
 
-    public function handle(PriceWatcherServiceInterface $service)
+    public function handle(PriceWatcherService $service, AdvertRepositoryInterface $advertRepo)
     {
-        $advert = Advert::find($this->listingId);
+        $advert = $advertRepo->findById($this->advertId);
+
         if ($advert) {
             $service->checkAdvert($advert);
         }

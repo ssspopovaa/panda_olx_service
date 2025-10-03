@@ -3,17 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SubscribeRequest;
-use App\Services\SubscriptionServiceInterface;
+use App\Services\Subscription\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller
 {
-    private SubscriptionServiceInterface $service;
-
-    public function __construct(SubscriptionServiceInterface $service)
+    public function __construct(private readonly SubscriptionService $service)
     {
-        $this->service = $service;
     }
 
     public function showSubscribeForm()
@@ -56,6 +53,7 @@ class SubscriptionController extends Controller
         $request->validate(['email' => 'required|email']);
         $email = $request->input('email');
         $subs = $this->service->listSubscriptionsByEmail($email);
+
         return view('subscriptions', ['subscriptions' => $subs]);
     }
 }

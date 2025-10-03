@@ -5,21 +5,17 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Repositories\AdvertRepositoryInterface;
 
 class PriceChangedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public array $priceHistory;
-
     public function __construct(
         private readonly int $advertId,
         private readonly ?float $oldPrice,
         private readonly ?float $newPrice,
-        private readonly AdvertRepositoryInterface $advertRepo
+        private readonly array $priceHistory,
     ) {
-        $this->priceHistory = $advertRepo->getPriceHistory($advertId);
     }
 
     public function build()
